@@ -1,0 +1,100 @@
+# ==============================================================================
+# BASH CONFIGURATION (macOS, Homebrew bash 5 recommended)
+# Location: ~/.bashrc  ->  symlink to config-settings/shell/bash/bashrc
+# Machine-specific / secret stuff goes to ~/.bashrc.local (not in git)
+#
+# Mirrors the zsh setup as closely as bash allows:
+#   - ble.sh  : grey autosuggestions from history + syntax highlighting + menu
+#   - Up/Down : prefix history search (see ~/.inputrc)
+#   - Ctrl+R  : fzf fuzzy history,  Ctrl+T files,  Alt+C cd
+#   - starship prompt, zoxide, shared aliases from common.sh
+# ==============================================================================
+
+# Only for interactive shells
+case $- in *i*) ;; *) return ;; esac
+
+# ------------------------------------------------------------------------------
+# 0. ble.sh (must be sourced at the very top, attached at the very bottom)
+# ------------------------------------------------------------------------------
+_blesh="$HOME/.local/share/blesh/ble.sh"
+if [[ -r $_blesh ]] && (( BASH_VERSINFO[0] >= 4 )); then
+  source "$_blesh" --noattach
+fi
+unset _blesh
+
+# ------------------------------------------------------------------------------
+# 1. SHARED ENV, PATH & ALIASES (same file is used by zsh)
+# ------------------------------------------------------------------------------
+[[ -r "$HOME/.config/shell/common.sh" ]] && . "$HOME/.config/shell/common.sh"
+
+# ------------------------------------------------------------------------------
+# 2. HISTORY (shared between all open terminals)
+# ------------------------------------------------------------------------------
+HISTFILE="$HOME/.bash_history"
+HISTSIZE=100000
+HISTFILESIZE=100000
+HISTCONTROL=ignoreboth:erasedups
+HISTTIMEFORMAT='%F %T  '
+shopt -s histappend cmdhist checkwinsize
+if (( BASH_VERSINFO[0] >= 4 )); then
+  shopt -s autocd globstar cdspell dirspell
+fi
+
+if [[ ${BLE_VERSION-} ]]; then
+  bleopt history_share=1
+else
+  PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
+# ------------------------------------------------------------------------------
+# 3. COMPLETION (bash-completion@2 needs bash >= 4.2)
+# ------------------------------------------------------------------------------
+if (( BASH_VERSINFO[0] >= 5 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) )); then
+  if [[ -n ${HOMEBREW_PREFIX-} && -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]]; then
+    . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
+  fi
+fi
+
+# ------------------------------------------------------------------------------
+# 4. ble.sh LOOK & FEEL (only when ble.sh is loaded)
+# ------------------------------------------------------------------------------
+if [[ ${BLE_VERSION-} ]]; then
+  bleopt complete_auto_delay=50          # suggestions appear almost instantly
+  bleopt complete_menu_style=align-nowrap
+  bleopt prompt_ps1_transient=           # keep full prompt in scrollback
+  ble-face auto_complete='fg=#565f89'    # same ghost-text color as zsh
+  # Right / End accepts suggestion, Alt+Right / Alt+F accepts one word (ble defaults)
+  ble-bind -m auto_complete -f 'C-@' auto_complete/insert   # Ctrl+Space
+fi
+
+# ------------------------------------------------------------------------------
+# 5. FZF (Ctrl+R history, Ctrl+T files, Alt+C directories)
+# ------------------------------------------------------------------------------
+if command -v fzf >/dev/null 2>&1; then
+  if [[ ${BLE_VERSION-} ]]; then
+    ble-import -d integration/fzf-completion
+    ble-import -d integration/fzf-key-bindings
+  else
+    eval "$(fzf --bash)"
+  fi
+fi
+
+# ------------------------------------------------------------------------------
+# 6. TOOL INTEGRATIONS (Starship, Zoxide)
+# ------------------------------------------------------------------------------
+command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
+command -v zoxide   >/dev/null 2>&1 && eval "$(zoxide init bash)"
+
+# ------------------------------------------------------------------------------
+# 7. BASH-ONLY ALIASES (shared aliases live in ~/.config/shell/common.sh)
+# ------------------------------------------------------------------------------
+alias reload="source ~/.bashrc && echo 'bash config reloaded!'"
+alias bashconfig="nvim ~/.bashrc"
+
+# ------------------------------------------------------------------------------
+# 8. LOCAL OVERRIDES (secrets, tokens, machine-specific paths) - not in git
+# ------------------------------------------------------------------------------
+[[ -r "$HOME/.bashrc.local" ]] && . "$HOME/.bashrc.local"
+
+# ble.sh must be attached last
+[[ ${BLE_VERSION-} ]] && ble-attach

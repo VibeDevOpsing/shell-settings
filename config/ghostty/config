@@ -1,0 +1,103 @@
+# ==============================================================================
+# GHOSTTY CONFIGURATION FOR AI AGENTS (Claude Code, AntiGravity, Codex) & TMUX
+# Location: ~/.config/ghostty/config
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. THEME & APPEARANCE
+# ------------------------------------------------------------------------------
+theme = TokyoNight
+
+font-family = "JetBrains Mono"
+font-size = 13
+font-feature = calt, liga
+
+background-opacity = 0.95
+background-blur-radius = 20
+
+window-padding-x = 12
+window-padding-y = 12
+window-padding-balance = true
+window-save-state = always
+
+macos-titlebar-style = transparent
+macos-option-as-alt = left
+macos-window-buttons = visible
+
+# ------------------------------------------------------------------------------
+# 2. AI TOOLS OPTIMIZATION (Claude Code, AntiGravity, Codex)
+# ------------------------------------------------------------------------------
+# Deep scrollback buffer for long AI code-generation output
+scrollback-limit = 5000000
+scroll-to-bottom = keystroke,no-output
+
+# Clipboard access without extra prompts (lets AI tools read/write the clipboard)
+clipboard-read = allow
+clipboard-write = allow
+clipboard-paste-protection = true
+clipboard-paste-bracketed-safe = true
+
+# Shell integration for the command line and navigation
+shell-integration = detect
+shell-integration-features = cursor,sudo,title,path,ssh-env,ssh-terminfo
+
+# Terminal emulation for maximum compatibility with SSH, tmux, and AI CLIs
+term = xterm-256color
+
+# Notify when a build or agent ran longer than 7 seconds in an unfocused window
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = bell,notify
+notify-on-command-finish-after = 7s
+
+# ------------------------------------------------------------------------------
+# 3. MOUSE SUPPORT & CURSOR
+# ------------------------------------------------------------------------------
+# Move the cursor by clicking anywhere on the command line
+cursor-style = bar
+cursor-style-blink = true
+cursor-click-to-move = true
+
+# Automatically copy mouse-selected text to the system clipboard
+copy-on-select = clipboard
+selection-clear-on-copy = true
+selection-clear-on-typing = true
+
+# Full mouse support in TUIs (tmux, claude, htop, micro)
+mouse-reporting = true
+mouse-hide-while-typing = true
+
+# Shift bypasses TUI mouse capture so you can select text directly
+mouse-shift-capture = false
+
+# ------------------------------------------------------------------------------
+# 4. SPLITS & MULTIPLEXING (window/terminal splits and TMUX)
+# ------------------------------------------------------------------------------
+# Opacity for unfocused splits
+unfocused-split-opacity = 0.85
+split-inherit-working-directory = true
+
+# Shortcuts for native Ghostty splits:
+# Cmd + D             : Vertical split (to the right)
+# Cmd + Shift + D     : Horizontal split (below)
+# Cmd + Option + Arrows: Move between splits
+# Cmd + Ctrl + Arrows  : Resize splits
+# Cmd + Shift + Enter : Zoom the current split to full screen
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+w=close_surface
+keybind = super+alt+left=goto_split:left
+keybind = super+alt+right=goto_split:right
+keybind = super+alt+up=goto_split:up
+keybind = super+alt+down=goto_split:down
+keybind = super+ctrl+left=resize_split:left,10
+keybind = super+ctrl+right=resize_split:right,10
+keybind = super+ctrl+up=resize_split:up,10
+keybind = super+ctrl+down=resize_split:down,10
+keybind = super+ctrl+equal=equalize_splits
+keybind = super+shift+enter=toggle_split_zoom
+
+# ------------------------------------------------------------------------------
+# 5. CLIPBOARD KEYBINDS
+# ------------------------------------------------------------------------------
+keybind = super+c=copy_to_clipboard:mixed
+keybind = super+v=paste_from_clipboard

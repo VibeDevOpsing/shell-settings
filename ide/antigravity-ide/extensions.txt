@@ -1,0 +1,5 @@
+golang.go
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-python-envs
+ms-vscode.makefile-tools

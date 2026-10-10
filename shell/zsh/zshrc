@@ -1,0 +1,258 @@
+# ==============================================================================
+# ZSH CONFIGURATION FOR GHOSTTY, ANTIGRAVITY IDE & MACOS
+# Location: ~/.zshrc  ->  symlink to config-settings/shell/zsh/zshrc
+# Machine-specific / secret stuff goes to ~/.zshrc.local (not in git)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. SHARED ENV, PATH & ALIASES (same file is used by bash)
+# ------------------------------------------------------------------------------
+[[ -r "$HOME/.config/shell/common.sh" ]] && source "$HOME/.config/shell/common.sh"
+typeset -U path fpath   # drop duplicate PATH/fpath entries
+
+# ------------------------------------------------------------------------------
+# 2. GHOSTTY SHELL INTEGRATION (OSC 133 prompt markers + Click-to-Move)
+# ------------------------------------------------------------------------------
+if [[ -n "$GHOSTTY_RESOURCES_DIR" && -f "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration" ]]; then
+  source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+elif [[ -f "/Applications/Ghostty.app/Contents/Resources/ghostty/shell-integration/zsh/ghostty-integration" ]]; then
+  source "/Applications/Ghostty.app/Contents/Resources/ghostty/shell-integration/zsh/ghostty-integration"
+fi
+
+# ------------------------------------------------------------------------------
+# 3. HISTORY & ZSH OPTIONS
+# ------------------------------------------------------------------------------
+# Absolute paths on purpose: IDE terminals (VS Code / Antigravity) override
+# $ZDOTDIR for their own shell integration, so never rely on it here.
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+
+# Synchronize history across all terminals/tabs/splits instantly
+setopt SHARE_HISTORY          # implies incremental append + import
+setopt EXTENDED_HISTORY       # store timestamps
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS      # no duplicates when searching with Up/Ctrl+R
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY            # `!!` / `!$` expand into the line instead of running
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS
+
+# ------------------------------------------------------------------------------
+# 4. COMPLETIONS SYSTEM
+# ------------------------------------------------------------------------------
+fpath=("$HOME/.zsh/plugins/zsh-completions/src" $fpath)
+[[ -n $HOMEBREW_PREFIX && -d $HOMEBREW_PREFIX/share/zsh/site-functions ]] &&
+  fpath=("$HOMEBREW_PREFIX/share/zsh/site-functions" $fpath)
+
+zmodload zsh/complist          # enables interactive menu selection
+autoload -Uz compinit
+
+# Rebuild the dump at most once a day, otherwise load cached (-C = fast).
+# (The old `[[ -n file(#q...) ]]` check never globbed, so it ran a full
+#  compinit on every shell start.)
+() {
+  local dump="$HOME/.zcompdump"
+  local -a stale=( $dump(N.mh+24) )
+  if [[ ! -s $dump ]] || (( $#stale )); then
+    compinit -d "$dump"
+  else
+    compinit -C -d "$dump"
+  fi
+}
+
+# Completers: normal completion -> words from history -> fuzzy corrections
+zstyle ':completion:*' completer _extensions _complete _history _approximate
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
+zstyle ':completion:*' rehash true
+
+# Interactive menu: Tab opens a list you can walk with arrows
+zstyle ':completion:*' menu select
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%F{blue}-- %d --%f'
+zstyle ':completion:*:messages'     format '%F{magenta}-- %d --%f'
+zstyle ':completion:*:warnings'     format '%F{red}-- no matches --%f'
+zstyle ':completion:*:corrections'  format '%F{yellow}-- %d (errors: %e) --%f'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Case-insensitive, then partial-word (f-b -> foo-bar), then substring
+zstyle ':completion:*' matcher-list \
+  'm:{a-zA-Z}={A-Za-z}' \
+  'r:|[._-]=* r:|=*' \
+  'l:|=* r:|=*'
+
+# History word completion: newest first, no duplicates
+zstyle ':completion:*:history-words' stop yes
+zstyle ':completion:*:history-words' remove-all-dups yes
+zstyle ':completion:*:history-words' list false
+zstyle ':completion:*:history-words' menu yes
+
+# ------------------------------------------------------------------------------
+# 5. KEYBINDINGS (terminal-independent)
+# ------------------------------------------------------------------------------
+# Terminals send different escape sequences for the same key depending on
+# "normal" vs "application" cursor mode (e.g. Up = ^[[A or ^[OA). We bind
+# BOTH variants plus whatever terminfo reports, so keys work in Ghostty,
+# Antigravity/VS Code terminal, Terminal.app, iTerm2, tmux, ssh, ...
+bindkey -e
+zmodload zsh/terminfo
+
+# _bind <widget> <keyseq>...   (skips empty sequences)
+_bind() {
+  local widget=$1 seq; shift
+  for seq in "$@"; do
+    [[ -n $seq ]] && bindkey -- "$seq" "$widget"
+  done
+}
+
+# Up/Down: search history by what is ALREADY typed (prefix search).
+# Type `git c` then press Up -> cycles only through commands starting with `git c`.
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+_bind up-line-or-beginning-search   '^[[A' '^[OA' "${terminfo[kcuu1]}" '^P'
+_bind down-line-or-beginning-search '^[[B' '^[OB' "${terminfo[kcud1]}" '^N'
+
+# Left/Right (Right also accepts autosuggestion)
+_bind backward-char '^[[D' '^[OD' "${terminfo[kcub1]}"
+_bind forward-char  '^[[C' '^[OC' "${terminfo[kcuf1]}"
+
+# Option/Alt + Arrow keys (move word by word; Alt+Right accepts suggestion word by word)
+_bind forward-word  '^[[1;3C' '^[[1;9C' '^[^[[C' '^[f'
+_bind backward-word '^[[1;3D' '^[[1;9D' '^[^[[D' '^[b'
+
+# Ctrl + Arrow keys / Home / End (jump to start/end of line)
+_bind end-of-line       '^[[1;5C' '^[[F' '^[OF' '^[[4~' '^[[8~' "${terminfo[kend]}"  '^E'
+_bind beginning-of-line '^[[1;5D' '^[[H' '^[OH' '^[[1~' '^[[7~' "${terminfo[khome]}" '^A'
+
+# Delete & Backspace keys
+_bind delete-char          '^[[3~' "${terminfo[kdch1]}"
+_bind backward-delete-char '^?' '^H'
+_bind backward-kill-word   '^[^?' '^W'
+
+# Shift+Tab: go backwards through the completion menu
+_bind reverse-menu-complete '^[[Z' "${terminfo[kcbt]}"
+bindkey -M menuselect '^[[Z' reverse-menu-complete
+# Arrows inside the Tab menu (menuselect does not understand the
+# *-beginning-search widgets used above, so bind it explicitly).
+# Enter = accept selection, Ctrl+G = cancel and restore what was typed.
+for _k in '^[[A' '^[OA'; do bindkey -M menuselect "$_k" up-line-or-history;   done
+for _k in '^[[B' '^[OB'; do bindkey -M menuselect "$_k" down-line-or-history; done
+for _k in '^[[C' '^[OC'; do bindkey -M menuselect "$_k" forward-char;         done
+for _k in '^[[D' '^[OD'; do bindkey -M menuselect "$_k" backward-char;        done
+unset _k
+
+# Alt+/ (and Alt+,): complete the CURRENT WORD from words in history
+# (press repeatedly to cycle older/newer). Bound by compinit; re-bound for safety.
+bindkey '^[/' _history-complete-older
+bindkey '^[,' _history-complete-newer
+
+# Native fallback for Ctrl+R if fzf is missing (overridden by fzf below)
+bindkey '^R' history-incremental-pattern-search-backward
+bindkey '^S' history-incremental-pattern-search-forward
+
+# Ctrl+X Ctrl+E: edit current command in $EDITOR (nvim)
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+# ------------------------------------------------------------------------------
+# 6. FZF (dynamic, fuzzy pick of FULL commands from history)
+# ------------------------------------------------------------------------------
+# Ctrl+R : opens a live-filtered list of history; whatever you already typed
+#          is used as the initial query. Enter inserts it into the prompt
+#          (does NOT execute), so you can edit before running.
+# Ctrl+T : pick files;  Alt+C : cd into directory
+# (FZF_* options are defined in common.sh so bash uses the same look)
+if command -v fzf &>/dev/null; then
+  eval "$(fzf --zsh)"
+fi
+
+# ------------------------------------------------------------------------------
+# 6b. FZF-TAB (Tab completion menu rendered by fzf, with fuzzy filtering)
+# ------------------------------------------------------------------------------
+# Must load AFTER compinit and BEFORE autosuggestions / syntax-highlighting.
+#   Tab          -> fuzzy menu of completions (type to filter, Enter to insert)
+#   Ctrl+Space   -> multi-select (inside fzf-tab)
+#   < / >        -> switch between completion groups
+#   Alt+/        -> history words, also shown in fzf
+# Falls back to the native `menu select` (section 4) if fzf or the plugin is missing.
+if command -v fzf &>/dev/null && [[ -f "$HOME/.zsh/plugins/fzf-tab/fzf-tab.plugin.zsh" ]]; then
+  zstyle ':completion:*' menu no                        # let fzf-tab own the menu
+  zstyle ':completion:*:descriptions' format '[%d]'     # fzf-tab ignores color escapes here
+  zstyle ':completion:*:git-checkout:*' sort false
+  zstyle ':fzf-tab:*' use-fzf-default-opts yes
+  zstyle ':fzf-tab:*' switch-group '<' '>'
+  zstyle ':fzf-tab:*' fzf-bindings 'ctrl-space:toggle+down'
+  # Previews
+  if command -v eza &>/dev/null; then
+    zstyle ':fzf-tab:complete:(cd|z|__zoxide_z|pushd):*' fzf-preview \
+      'eza -1 --icons=always --color=always --group-directories-first $realpath'
+  fi
+  zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+    '[[ $group == "[process ID]" ]] && ps -p $word -o command= -ww'
+  zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+  zstyle ':fzf-tab:complete:(-parameter-|-brace-parameter-|export|unset|expand):*' \
+    fzf-preview 'echo ${(P)word}'
+  zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+    'git diff --color=always -- $word 2>/dev/null | head -200'
+  zstyle ':fzf-tab:complete:git-(log|show|checkout|switch):*' fzf-preview \
+    'git log --oneline --color=always -20 $word 2>/dev/null'
+
+  source "$HOME/.zsh/plugins/fzf-tab/fzf-tab.plugin.zsh"
+fi
+
+# ------------------------------------------------------------------------------
+# 7. PLUGINS (Autosuggestions & Syntax Highlighting)
+# ------------------------------------------------------------------------------
+# Zsh Autosuggestions: grey "ghost" text from history as you type.
+#   Right / End / Ctrl+E  -> accept whole suggestion
+#   Alt+Right / Alt+F     -> accept next word only
+#   Ctrl+Space            -> accept whole suggestion
+if [[ -f "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#565f89"
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=80
+  ZSH_AUTOSUGGEST_USE_ASYNC=1
+  source "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  bindkey '^ ' autosuggest-accept
+fi
+
+# Zsh Syntax Highlighting (Must be loaded LAST among plugins)
+if [[ -f "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+# ------------------------------------------------------------------------------
+# 8. TOOL INTEGRATIONS (Starship, Bun, Zoxide)
+# ------------------------------------------------------------------------------
+# Starship Prompt
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
+
+# Bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# Zoxide (Smarter cd) - keep near the end
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# ------------------------------------------------------------------------------
+# 9. ZSH-ONLY ALIASES (shared aliases live in ~/.config/shell/common.sh)
+# ------------------------------------------------------------------------------
+alias reload="source ~/.zshrc && echo 'zsh config reloaded!'"
+alias zshconfig="nvim ~/.zshrc"
+
+# ------------------------------------------------------------------------------
+# 10. LOCAL OVERRIDES (secrets, tokens, machine-specific paths) - not in git
+# ------------------------------------------------------------------------------
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

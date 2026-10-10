@@ -1,0 +1,21 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Editor swap / temp files
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+
+# Local secret overrides (never commit secrets)
+*.local
+shell/zsh/zshrc.local
+shell/bash/bashrc.local
+
+# Backups created during bootstrap
+.dotfiles-backup/

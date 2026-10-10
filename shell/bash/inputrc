@@ -1,0 +1,48 @@
+# ==============================================================================
+# ~/.inputrc  ->  symlink to config-settings/shell/bash/inputrc
+# Readline settings: used by bash and every readline-based REPL
+# (python, psql, sqlite3, node --interactive with rlwrap, ...)
+# ==============================================================================
+$include /etc/inputrc
+
+# --- Completion ---------------------------------------------------------------
+set completion-ignore-case on        # case-insensitive Tab
+set completion-map-case on           # treat - and _ as equal
+set show-all-if-ambiguous on         # list matches on first Tab
+set menu-complete-display-prefix on  # show common prefix before cycling
+set colored-stats on                 # color by file type
+set colored-completion-prefix on     # highlight typed prefix in the list
+set visible-stats on                 # append / * @ markers
+set mark-symlinked-directories on
+set skip-completed-text on
+set bell-style none
+
+# Tab cycles through matches, Shift+Tab goes back
+TAB: menu-complete
+"\e[Z": menu-complete-backward
+
+# --- History: Up/Down search by what is already typed ------------------------
+# Both normal (CSI) and application (SS3) cursor-key modes -> works in any terminal
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\eOA": history-search-backward
+"\eOB": history-search-forward
+
+# --- Word movement (Option/Alt + Arrows, Ctrl + Arrows) ----------------------
+"\e[1;3C": forward-word
+"\e[1;3D": backward-word
+"\e[1;9C": forward-word
+"\e[1;9D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+"\e[1;5C": end-of-line
+"\e[1;5D": beginning-of-line
+
+# --- Home / End / Delete ------------------------------------------------------
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[3~": delete-char

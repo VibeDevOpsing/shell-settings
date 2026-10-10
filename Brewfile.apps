@@ -1,0 +1,34 @@
+# ==============================================================================
+# Brewfile.apps — GUI apps (optional):  ./install.sh --apps
+# These are apps currently in /Applications that were installed manually;
+# here they are installed via Homebrew casks instead.
+# Comment out anything you don't want on a new machine.
+# ==============================================================================
+
+# --- AI & IDE -----------------------------------------------------------------
+cask "antigravity"            # Google Antigravity
+cask "claude"
+cask "chatgpt"
+cask "lm-studio"
+
+# --- Browsers & communication -------------------------------------------------
+cask "google-chrome"
+cask "telegram"
+cask "discord"
+
+# --- Utilities ----------------------------------------------------------------
+cask "bitwarden"
+cask "maccy"                  # clipboard manager
+cask "pearcleaner"            # app uninstaller
+cask "opendisplay"
+cask "keychron-assistant"
+cask "winbox"                 # MikroTik
+cask "raspberry-pi-imager"
+cask "balenaetcher"
+
+# --- Games --------------------------------------------------------------------
+# cask "battle-net"
+# cask "league-of-legends"
+
+# Not available as casks — install manually:
+#   Antigravity IDE, Xirp (Chirp), Vorssaint

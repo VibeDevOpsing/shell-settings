@@ -1,0 +1,70 @@
+# Starship prompt configuration optimized for Ghostty (TokyoNight theme)
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$package\
+$nodejs\
+$bun\
+$python\
+$rust\
+$golang\
+$cmd_duration\
+$line_break\
+$character"""
+
+command_timeout = 1000
+
+[directory]
+style = "bold #7aa2f7"
+truncation_length = 4
+truncation_symbol = "…/"
+read_only = " 🔒"
+
+[git_branch]
+symbol = "󰘬 "
+style = "bold #bb9af7"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold #f7768e"
+format = "([$all_status$ahead_behind]($style) )"
+
+[character]
+success_symbol = "[❯](bold #73daca)"
+error_symbol = "[❯](bold #f7768e)"
+vimcmd_symbol = "[❮](bold #e0af68)"
+
+[nodejs]
+symbol = " "
+style = "bold #73daca"
+format = "via [$symbol($version )]($style)"
+
+[bun]
+symbol = "🥟 "
+style = "bold #f7c59f"
+format = "via [$symbol($version )]($style)"
+
+[python]
+symbol = " "
+style = "bold #e0af68"
+format = "via [${symbol}${pyenv_prefix}(${version} )]($style)"
+
+[rust]
+symbol = " "
+style = "bold #ff9e64"
+format = "via [$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+style = "bold #7dcfff"
+format = "via [$symbol($version )]($style)"
+
+[cmd_duration]
+min_time = 2000
+style = "bold #e0af68"
+format = "took [$duration]($style) "
+
+[package]
+disabled = true

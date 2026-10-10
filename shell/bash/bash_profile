@@ -1,0 +1,9 @@
+# ==============================================================================
+# ~/.bash_profile  ->  symlink to config-settings/shell/bash/bash_profile
+# Login bash shells (Terminal.app, ssh) read this file, not ~/.bashrc,
+# so we just forward to ~/.bashrc.
+# ==============================================================================
+export BASH_SILENCE_DEPRECATION_WARNING=1   # hide macOS "default shell is zsh" notice
+
+[[ -r "$HOME/.profile" ]] && . "$HOME/.profile"
+[[ -r "$HOME/.bashrc" ]] && . "$HOME/.bashrc"
