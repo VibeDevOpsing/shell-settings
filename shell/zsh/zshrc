@@ -17,6 +17,10 @@ if [[ -n "$GHOSTTY_RESOURCES_DIR" && -f "$GHOSTTY_RESOURCES_DIR/shell-integratio
   source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
 elif [[ -f "/Applications/Ghostty.app/Contents/Resources/ghostty/shell-integration/zsh/ghostty-integration" ]]; then
   source "/Applications/Ghostty.app/Contents/Resources/ghostty/shell-integration/zsh/ghostty-integration"
+elif [[ -f "/usr/share/ghostty/shell-integration/zsh/ghostty-integration" ]]; then
+  source "/usr/share/ghostty/shell-integration/zsh/ghostty-integration"
+elif [[ -f "$HOME/.local/share/ghostty/shell-integration/zsh/ghostty-integration" ]]; then
+  source "$HOME/.local/share/ghostty/shell-integration/zsh/ghostty-integration"
 fi
 
 # ------------------------------------------------------------------------------

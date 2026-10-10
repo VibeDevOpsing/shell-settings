@@ -15,13 +15,14 @@ if [ -n "$_dot_link" ]; then
 fi
 unset _dot_link
 
-# ------------------------------------------------------------------------------
-# Homebrew (Apple Silicon first, then Intel)
+# Homebrew (Apple Silicon, Intel Mac, or Linuxbrew)
 # ------------------------------------------------------------------------------
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [ -x /usr/local/bin/brew ]; then
   eval "$(/usr/local/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 # ------------------------------------------------------------------------------
@@ -59,11 +60,18 @@ export FZF_CTRL_R_OPTS="--prompt='history> ' \
   --preview 'echo {2..}' --preview-window=down:3:wrap:hidden \
   --bind 'ctrl-/:toggle-preview' \
   --header 'Enter: insert  |  Ctrl-/: preview  |  Esc: cancel'"
-if command -v fd >/dev/null 2>&1; then
-  export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND="fd --type d --hidden --follow --exclude .git"
+if ! command -v fd >/dev/null 2>&1 && command -v fdfind >/dev/null 2>&1; then
+  alias fd="fdfind"
 fi
+_fd_bin=""
+command -v fd >/dev/null 2>&1 && _fd_bin="fd"
+[ -z "$_fd_bin" ] && command -v fdfind >/dev/null 2>&1 && _fd_bin="fdfind"
+if [ -n "$_fd_bin" ]; then
+  export FZF_DEFAULT_COMMAND="$_fd_bin --type f --hidden --follow --exclude .git"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="$_fd_bin --type d --hidden --follow --exclude .git"
+fi
+unset _fd_bin
 
 # ------------------------------------------------------------------------------
 # Aliases
