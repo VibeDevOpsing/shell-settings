@@ -97,7 +97,9 @@ keybind = super+ctrl+equal=equalize_splits
 keybind = super+shift+enter=toggle_split_zoom
 
 # ------------------------------------------------------------------------------
-# 5. CLIPBOARD KEYBINDS
+# 5. CLIPBOARD KEYBINDS (macOS Cmd+C/V and Linux Ctrl+Shift+C/V)
 # ------------------------------------------------------------------------------
 keybind = super+c=copy_to_clipboard:mixed
 keybind = super+v=paste_from_clipboard
+keybind = ctrl+shift+c=copy_to_clipboard:mixed
+keybind = ctrl+shift+v=paste_from_clipboard

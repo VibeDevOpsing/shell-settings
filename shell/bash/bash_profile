@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ==============================================================================
 # ~/.bash_profile  ->  symlink to config-settings/shell/bash/bash_profile
 # Login bash shells (Terminal.app, ssh) read this file, not ~/.bashrc,
@@ -5,5 +6,7 @@
 # ==============================================================================
 export BASH_SILENCE_DEPRECATION_WARNING=1   # hide macOS "default shell is zsh" notice
 
+# shellcheck disable=SC1091
 [[ -r "$HOME/.profile" ]] && . "$HOME/.profile"
+# shellcheck disable=SC1091
 [[ -r "$HOME/.bashrc" ]] && . "$HOME/.bashrc"

@@ -1,5 +1,5 @@
 # ==============================================================================
-# Brewfile — CLI tools, fonts & terminals (installed by ./install.sh)
+# Brewfile -- CLI tools, fonts & terminals (installed by ./install.sh)
 #   brew bundle --file=Brewfile            # install
 #   brew bundle check --file=Brewfile      # what's missing
 #   ./scripts/snapshot.sh                  # re-generate from current machine
@@ -12,6 +12,7 @@ tap "oven-sh/bun"
 
 # --- Shell core (required by the zsh/bash config) -----------------------------
 brew "git"
+brew "git-delta"
 brew "zsh"
 brew "bash"                 # bash 5 (macOS ships 3.2)
 brew "bash-completion@2"
@@ -20,6 +21,7 @@ brew "make"                 # gmake, used to build ble.sh
 brew "fzf"
 brew "fd"
 brew "ripgrep"
+brew "bat"
 brew "eza"
 brew "zoxide"
 brew "starship"
@@ -56,7 +58,6 @@ brew "ncdu"
 brew "tuios"
 
 # --- Media & documents --------------------------------------------------------
-brew "ffmpeg", link: false
 brew "ffmpeg-full", link: true
 brew "whisper.cpp"
 brew "imagemagick-full", link: true

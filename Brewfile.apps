@@ -1,5 +1,5 @@
 # ==============================================================================
-# Brewfile.apps — GUI apps (optional):  ./install.sh --apps
+# Brewfile.apps -- GUI apps (optional):  ./install.sh --apps
 # These are apps currently in /Applications that were installed manually;
 # here they are installed via Homebrew casks instead.
 # Comment out anything you don't want on a new machine.
@@ -30,5 +30,5 @@ cask "balenaetcher"
 # cask "battle-net"
 # cask "league-of-legends"
 
-# Not available as casks — install manually:
+# Not available as casks -- install manually:
 #   Antigravity IDE, Xirp (Chirp), Vorssaint

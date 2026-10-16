@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ==============================================================================
 # BASH CONFIGURATION (macOS, Homebrew bash 5 recommended)
 # Location: ~/.bashrc  ->  symlink to config-settings/shell/bash/bashrc
@@ -18,6 +19,7 @@ case $- in *i*) ;; *) return ;; esac
 # ------------------------------------------------------------------------------
 _blesh="$HOME/.local/share/blesh/ble.sh"
 if [[ -r $_blesh ]] && (( BASH_VERSINFO[0] >= 4 )); then
+  # shellcheck disable=SC1090
   source "$_blesh" --noattach
 fi
 unset _blesh
@@ -25,6 +27,7 @@ unset _blesh
 # ------------------------------------------------------------------------------
 # 1. SHARED ENV, PATH & ALIASES (same file is used by zsh)
 # ------------------------------------------------------------------------------
+# shellcheck disable=SC1091
 [[ -r "$HOME/.config/shell/common.sh" ]] && . "$HOME/.config/shell/common.sh"
 
 # ------------------------------------------------------------------------------
@@ -51,6 +54,7 @@ fi
 # ------------------------------------------------------------------------------
 if (( BASH_VERSINFO[0] >= 5 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) )); then
   if [[ -n ${HOMEBREW_PREFIX-} && -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]]; then
+    # shellcheck disable=SC1091
     . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
   fi
 fi
@@ -94,6 +98,7 @@ alias bashconfig="nvim ~/.bashrc"
 # ------------------------------------------------------------------------------
 # 8. LOCAL OVERRIDES (secrets, tokens, machine-specific paths) - not in git
 # ------------------------------------------------------------------------------
+# shellcheck disable=SC1091
 [[ -r "$HOME/.bashrc.local" ]] && . "$HOME/.bashrc.local"
 
 # ble.sh must be attached last

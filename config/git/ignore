@@ -1,0 +1,24 @@
+# ==============================================================================
+# GLOBAL GITIGNORE (XDG standard path: ~/.config/git/ignore)
+# ==============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# Editors & IDEs
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Local environment & secret files
+.env.local
+.env.*.local
+*.local

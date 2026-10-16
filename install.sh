@@ -9,13 +9,16 @@
 #   - Linux (all)  -> ./scripts/install-linux.sh
 #
 # Usage:
-#   ./install.sh               Automatic full installation
-#   ./install.sh --apps        Install GUI applications (macOS Brewfile.apps)
-#   ./install.sh --link-only   Only link dotfiles without installing packages
-#   ./install.sh --no-brew     macOS: skip Homebrew bundle
-#   ./install.sh --no-pkg      Linux: skip distro package manager
-#   ./install.sh --macos       Force run macOS installer
-#   ./install.sh --linux       Force run Linux installer
+#   ./install.sh                  Automatic full installation
+#   ./install.sh --apps           Install GUI applications (macOS Brewfile.apps)
+#   ./install.sh --macos-defaults Apply recommended macOS system preferences
+#   ./install.sh --link-only      Only link dotfiles without installing packages
+#   ./install.sh --no-brew        Skip Homebrew / Linuxbrew installation & bundle
+#   ./install.sh --no-pkg         Linux: skip native distro package manager
+#   ./install.sh --dry-run        Preview actions without modifying the system
+#   ./install.sh --check          Verify symlinks, tools, and plugins health
+#   ./install.sh --macos          Force run macOS installer
+#   ./install.sh --linux          Force run Linux installer
 #   ./install.sh --help
 # ==============================================================================
 set -euo pipefail
@@ -24,12 +27,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Colors
 if [ -t 1 ]; then
-  C_B=$'\033[1;34m'; C_G=$'\033[1;32m'; C_Y=$'\033[1;33m'; C_R=$'\033[1;31m'; C_0=$'\033[0m'
+  C_B=$'\033[1;34m'; C_G=$'\033[1;32m'; C_R=$'\033[1;31m'; C_0=$'\033[0m'
 else
-  C_B=; C_G=; C_Y=; C_R=; C_0=
+  C_B=; C_G=; C_R=; C_0=
 fi
 
-usage() { sed -n '3,18p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '3,22p' "$0" | sed 's/^# \{0,1\}//'; }
 
 TARGET_OS=""
 FORWARD_ARGS=()

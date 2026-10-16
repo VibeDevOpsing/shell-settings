@@ -200,13 +200,22 @@ if command -v fzf &>/dev/null && [[ -f "$HOME/.zsh/plugins/fzf-tab/fzf-tab.plugi
     zstyle ':fzf-tab:complete:(cd|z|__zoxide_z|pushd):*' fzf-preview \
       'eza -1 --icons=always --color=always --group-directories-first $realpath'
   fi
+  if command -v bat &>/dev/null; then
+    zstyle ':fzf-tab:complete:(nvim|vim|vi|cat|bat|less|code):*' fzf-preview \
+      '[[ -f $realpath ]] && bat --color=always --style=numbers --line-range=:200 $realpath || eza -1 --icons=always --color=always $realpath 2>/dev/null'
+  fi
   zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
     '[[ $group == "[process ID]" ]] && ps -p $word -o command= -ww'
   zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
   zstyle ':fzf-tab:complete:(-parameter-|-brace-parameter-|export|unset|expand):*' \
     fzf-preview 'echo ${(P)word}'
-  zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
-    'git diff --color=always -- $word 2>/dev/null | head -200'
+  if command -v delta &>/dev/null; then
+    zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+      'git diff -- $word 2>/dev/null | delta --width=${FZF_PREVIEW_COLUMNS:-80}'
+  else
+    zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+      'git diff --color=always -- $word 2>/dev/null | head -200'
+  fi
   zstyle ':fzf-tab:complete:git-(log|show|checkout|switch):*' fzf-preview \
     'git log --oneline --color=always -20 $word 2>/dev/null'
 

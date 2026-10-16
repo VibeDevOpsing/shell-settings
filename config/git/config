@@ -1,0 +1,51 @@
+# ==============================================================================
+# XDG GIT CONFIGURATION
+# Location: ~/.config/git/config -> symlink to config-settings/config/git/config
+#
+# Personal identity ([user] name / email / signingkey) stays in ~/.gitconfig
+# so it is never overwritten or hardcoded in the public repository.
+# ==============================================================================
+
+[init]
+	defaultBranch = main
+
+[core]
+	editor = nvim
+	autocrlf = input
+
+[delta]
+	navigate = true
+	dark = true
+	line-numbers = true
+	side-by-side = false
+	syntax-theme = tokyonight_night
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved = default
+	algorithm = histogram
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[fetch]
+	prune = true
+
+[rerere]
+	enabled = true
+
+[alias]
+	st = status -sb
+	co = checkout
+	sw = switch
+	br = branch -vv
+	lg = log --oneline --graph --decorate -n 25
+	last = log -1 HEAD --stat
+	unstage = restore --staged
+	amend = commit --amend --no-edit

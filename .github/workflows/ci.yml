@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        run: |
+          shellcheck -x install.sh scripts/*.sh shell/common.sh shell/bash/bashrc shell/bash/bash_profile
+
+  test-install:
+    name: Test Installer (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dry-run full installer
+        run: ./install.sh --dry-run
+      - name: Link-only installation & health check
+        run: |
+          ./install.sh --link-only
+          ./install.sh --check
