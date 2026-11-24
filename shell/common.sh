@@ -129,6 +129,14 @@ alias tmuxconfig="nvim ~/.tmux.conf"
 alias ff="fastfetch"
 alias dotfiles='cd "$DOTFILES"'
 
+# Emergency terminal fix (resets tty, pops Kitty keyboard protocol, disables mouse tracking & bracketed paste)
+fixterm() {
+  printf '\033[<u\033[?1000l\033[?1002l\033[?1003l\033[?1006l\033[?2004l'
+  stty sane 2>/dev/null || true
+  clear
+}
+
+
 # Yazi wrapper: launch with `y` and change into the last visited directory on exit
 if command -v yazi >/dev/null 2>&1; then
   y() {

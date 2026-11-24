@@ -1,3 +1,6 @@
 {
-    "securecoder.enabled": true
+    "securecoder.enabled": true,
+    "editor.formatOnPaste": true,
+    "editor.fontLigatures": false,
+    "workbench.colorTheme": "Moonlight Dracula Darker"
 }

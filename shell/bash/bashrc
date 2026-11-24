@@ -63,9 +63,10 @@ fi
 # 4. ble.sh LOOK & FEEL (only when ble.sh is loaded)
 # ------------------------------------------------------------------------------
 if [[ ${BLE_VERSION-} ]]; then
-  bleopt complete_auto_delay=50          # suggestions appear almost instantly
+  bleopt complete_auto_delay=150         # debounce auto-suggestions to avoid completion storm
   bleopt complete_menu_style=align-nowrap
   bleopt prompt_ps1_transient=           # keep full prompt in scrollback
+  bleopt term_modifyOtherKeys_external=  # reset extended keyboard mode before running external commands (fixes incus console, raw serial, etc.)
   ble-face auto_complete='fg=#565f89'    # same ghost-text color as zsh
   # Right / End accepts suggestion, Alt+Right / Alt+F accepts one word (ble defaults)
   ble-bind -m auto_complete -f 'C-@' auto_complete/insert   # Ctrl+Space
