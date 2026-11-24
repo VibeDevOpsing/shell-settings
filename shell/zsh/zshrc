@@ -269,3 +269,8 @@ alias zshconfig="nvim ~/.zshrc"
 # 10. LOCAL OVERRIDES (secrets, tokens, machine-specific paths) - not in git
 # ------------------------------------------------------------------------------
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# ------------------------------------------------------------------------------
+# 11. STARTUP BANNER (Fastfetch - primary terminals only; set FASTFETCH_DISABLE=1 in ~/.zshrc.local to opt out)
+# ------------------------------------------------------------------------------
+(( $+functions[_show_fastfetch] )) && _show_fastfetch

@@ -101,5 +101,10 @@ alias bashconfig="nvim ~/.bashrc"
 # shellcheck disable=SC1091
 [[ -r "$HOME/.bashrc.local" ]] && . "$HOME/.bashrc.local"
 
+# ------------------------------------------------------------------------------
+# 9. STARTUP BANNER (Fastfetch - must run before ble-attach)
+# ------------------------------------------------------------------------------
+declare -F _show_fastfetch >/dev/null 2>&1 && _show_fastfetch
+
 # ble.sh must be attached last
 [[ ${BLE_VERSION-} ]] && ble-attach

@@ -1,7 +1,7 @@
 # ⚙️ Config & Settings (Universal Dotfiles for macOS & Linux)
 
 A universal, modular, and portable repository of workstation configurations for **macOS** and **Linux (Ubuntu/Debian, Arch Linux, Fedora)**:
-**Zsh, Bash, Ghostty, Neovim, Starship, Tmux, Git + Delta, Yazi, Bat, Antigravity IDE, Homebrew / Linuxbrew / Pacman / APT / DNF**.
+**Zsh, Bash, Ghostty, Neovim, Starship, Fastfetch, Tmux, Git + Delta, Yazi, Bat, Antigravity IDE, Homebrew / Linuxbrew / Pacman / APT / DNF**.
 
 All configurations are linked via **symbolic links (symlinks)**: any edits to your config files are immediately reflected in this repository.
 
@@ -18,12 +18,13 @@ config-settings/
 ├── .gitignore                   # Ignores system junk and local secrets
 ├── .github/workflows/ci.yml     # CI pipeline (ShellCheck + macOS/Linux installer tests)
 ├── config/
+│   ├── fastfetch/config.jsonc   # Fastfetch system info (TokyoNight + Nerd Font)
 │   ├── ghostty/config           # Ghostty terminal config (TokyoNight, splits, AI scrollback)
 │   ├── git/                     # XDG Git config (delta, aliases) & global ignore
 │   │   ├── config
 │   │   └── ignore
 │   ├── nvim/                    # Full Neovim config (init.lua + lazy-lock.json)
-│   ├── starship.toml            # Optimized TokyoNight shell prompt
+│   ├── starship.toml            # Optimized TokyoNight shell prompt (aligned with Fastfetch)
 │   ├── tmux/tmux.conf           # Tmux config (TokyoNight bar, 1-indexed, vim keys)
 │   └── yazi/yazi.toml           # Yazi terminal file manager config
 ├── ide/
@@ -85,7 +86,7 @@ If you prefer to run the setup directly for a specific platform:
 
 #### 🍏 macOS (`./scripts/install-macos.sh` or `./install.sh --macos`):
 - Installs **Xcode Command Line Tools** and **Homebrew**.
-- Installs all packages from `Brewfile` (`fzf`, `eza`, `bat`, `git-delta`, `zoxide`, `starship`, `neovim`, `tmux`, `yazi`, Nerd Fonts, Ghostty, etc.).
+- Installs all packages from `Brewfile` (`fzf`, `eza`, `bat`, `git-delta`, `zoxide`, `starship`, `fastfetch`, `neovim`, `tmux`, `yazi`, Nerd Fonts, Ghostty, etc.).
 - Installs Zsh plugins (`fzf-tab`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `zsh-completions`) and `ble.sh` for Bash.
 - Backs up existing configs to `~/.dotfiles-backup/<timestamp>/` and creates symlinks.
 - Installs Antigravity IDE extensions and restores Neovim plugins from `lazy-lock.json`.
@@ -97,11 +98,11 @@ If you prefer to run the setup directly for a specific platform:
 #### 🐧 Linux (`./scripts/install-linux.sh` or `./install.sh --linux`):
 Automatically detects the distribution family and ensures a complete CLI environment:
 - **Arch Linux / Manjaro / EndeavourOS**:
-  Uses `pacman` to install `base-devel`, `git`, `zsh`, `fzf`, `ripgrep`, `fd`, `bat`, `git-delta`, `eza`, `zoxide`, `starship`, `yazi`, `neovim`, `tmux`, and Nerd Fonts.
+  Uses `pacman` to install `base-devel`, `git`, `zsh`, `fzf`, `ripgrep`, `fd`, `bat`, `git-delta`, `eza`, `zoxide`, `starship`, `fastfetch`, `yazi`, `neovim`, `tmux`, and Nerd Fonts.
 - **Ubuntu / Debian / Pop!_OS / Mint**:
-  Uses `apt-get` for core packages, creates `~/.local/bin/fd` and `~/.local/bin/bat` compatibility symlinks, installs `starship`, `zoxide`, `eza`, and downloads JetBrains Mono Nerd Font into `~/.local/share/fonts`.
+  Uses `apt-get` for core packages (including `fastfetch` when available in `apt`, with Linuxbrew fallback), creates `~/.local/bin/fd` and `~/.local/bin/bat` compatibility symlinks, installs `starship`, `zoxide`, `eza`, and downloads JetBrains Mono Nerd Font into `~/.local/share/fonts`.
 - **Fedora / RHEL / Rocky**:
-  Uses `dnf` for developer tools, `starship`, `zoxide`, `eza`, `bat`, and `git-delta`.
+  Uses `dnf` for developer tools, `starship`, `fastfetch`, `zoxide`, `eza`, `bat`, and `git-delta`.
 - **Homebrew on Linux (Linuxbrew)**:
   Automatically installs **Homebrew (Linuxbrew)** if not already present on the system and bundles cross-platform CLI tools from `Brewfile` (can be skipped with `--no-brew`).
 - Creates symlinks for shell, nvim, tmux, git, yazi, ghostty, and IDE settings.
@@ -129,7 +130,7 @@ Flags can be passed to either the universal `./install.sh` or the platform scrip
 ## 🔄 Keeping Changes in Sync
 
 Because all configuration files are linked via **symbolic links**:
-- Editing `~/.zshrc`, `~/.config/ghostty/config`, `~/.config/nvim/init.lua`, `~/.tmux.conf`, or `~/.config/git/config` directly updates the files inside this repository.
+- Editing `~/.zshrc`, `~/.config/ghostty/config`, `~/.config/fastfetch/config.jsonc`, `~/.config/starship.toml`, `~/.config/nvim/init.lua`, `~/.tmux.conf`, or `~/.config/git/config` directly updates the files inside this repository.
 - Jump to the repository from anywhere:
   ```bash
   dotfiles
@@ -173,4 +174,5 @@ The `snapshot.sh` script detects newly installed packages and appends them to `B
 - **Alt + /**: Complete the current word from history.
 - **Ctrl + X, Ctrl + E**: Open the current command line in Neovim for full editing.
 - `y`: Launch the `yazi` terminal file manager and automatically `cd` into the last visited folder on exit.
+- `ff` / `fastfetchconfig`: Run `fastfetch` manually or edit `~/.config/fastfetch/config.jsonc`. Fastfetch auto-runs on startup in primary terminals (like Ghostty) and is automatically skipped in IDE terminals, `tmux`, nested subshells, AI agents, and on `reload` (set `export FASTFETCH_DISABLE=1` in `~/.zshrc.local` or `~/.bashrc.local` to disable).
 - `reload`: Reload shell configuration without closing the terminal.

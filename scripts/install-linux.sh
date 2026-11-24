@@ -86,7 +86,7 @@ install_arch_packages() {
   step "Installing packages via pacman (Arch Linux)"
   local pkgs=(
     base-devel procps-ng file git zsh bash gawk fzf ripgrep fd eza zoxide
-    starship bat git-delta yazi neovim tmux jq curl wget unzip fontconfig
+    starship fastfetch bat git-delta yazi neovim tmux jq curl wget unzip fontconfig
   )
   for opt in ttf-jetbrains-mono-nerd ttf-fira-code-nerd podman podman-compose; do
     if pacman -Si "$opt" >/dev/null 2>&1; then
@@ -157,13 +157,26 @@ install_debian_packages() {
       has_sudo apt-get install -y eza 2>/dev/null || warn "eza install skipped (will install via Homebrew or fall back to ls)"
     fi
   fi
+
+  # Fastfetch (system info banner)
+  if ! command -v fastfetch >/dev/null 2>&1; then
+    step "Installing Fastfetch"
+    if [ "$DRY_RUN" -eq 1 ]; then
+      run_cmd "install fastfetch via apt (or Linuxbrew fallback)"
+    elif apt-cache show fastfetch >/dev/null 2>&1; then
+      has_sudo apt-get install -y fastfetch
+      ok "fastfetch installed"
+    else
+      warn "fastfetch not available in apt (will install via Homebrew / Linuxbrew)"
+    fi
+  fi
 }
 
 install_fedora_packages() {
   step "Installing packages via dnf (Fedora / RHEL)"
   has_sudo dnf install -y \
     @development-tools procps-ng file git zsh bash gawk fzf ripgrep fd-find \
-    bat git-delta tmux jq neovim curl wget unzip fontconfig starship zoxide eza
+    bat git-delta tmux jq neovim curl wget unzip fontconfig starship fastfetch zoxide eza
   ok "dnf packages installed"
 
   if [ "$DRY_RUN" -eq 0 ]; then

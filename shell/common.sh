@@ -123,8 +123,10 @@ alias v="nvim"
 alias vim="nvim"
 alias vi="nvim"
 alias ghosttyconfig="nvim ~/.config/ghostty/config"
+alias fastfetchconfig="nvim ~/.config/fastfetch/config.jsonc"
 alias nvimconfig="nvim ~/.config/nvim/init.lua"
 alias tmuxconfig="nvim ~/.tmux.conf"
+alias ff="fastfetch"
 alias dotfiles='cd "$DOTFILES"'
 
 # Yazi wrapper: launch with `y` and change into the last visited directory on exit
@@ -142,3 +144,33 @@ if command -v yazi >/dev/null 2>&1; then
     unset _yazi_tmp _yazi_cwd
   }
 fi
+
+# Startup system summary (Fastfetch) for primary interactive terminals only.
+# Skips: non-interactive/non-TTY shells, reload (re-sourcing), nested subshells,
+# tmux/screen/zellij, editor/file-manager subshells, IDE terminals, and AI/CI runners.
+_show_fastfetch() {
+  command -v fastfetch >/dev/null 2>&1 || return 0
+  [ -z "${FASTFETCH_DISABLE:-}" ] || return 0
+  [ -z "${_FASTFETCH_SHOWN:-}" ] || return 0
+  case "$-" in *i*) ;; *) return 0 ;; esac
+  [ -t 0 ] && [ -t 1 ] || return 0
+  [ "${TERM:-dumb}" != "dumb" ] || return 0
+  [ "${SHLVL:-1}" -le 1 ] || return 0
+  [ -z "${TMUX:-}" ] && [ -z "${STY:-}" ] && [ -z "${ZELLIJ:-}" ] || return 0
+  [ -z "${NVIM:-}" ] && [ -z "${YAZI_LEVEL:-}" ] && [ -z "${RANGER_LEVEL:-}" ] || return 0
+  [ -z "${VSCODE_INJECTION:-}" ] && [ -z "${VSCODE_IPC_HOOK_CLI:-}" ] && [ -z "${VSCODE_GIT_IPC_HANDLE:-}" ] || return 0
+  [ -z "${ANTIGRAVITY_AGENT:-}" ] && [ -z "${ANTIGRAVITY_CLI_ALIAS:-}" ] || return 0
+  [ -z "${CLAUDECODE:-}" ] && [ -z "${CLAUDE_CODE:-}" ] && [ -z "${CODEX_SANDBOX:-}" ] && [ -z "${CI:-}" ] || return 0
+  [ -z "${INSIDE_EMACS:-}" ] && [ -z "${ZED_TERM:-}" ] || return 0
+  case "${TERM_PROGRAM:-}" in
+    vscode|VSCodium|cursor|Cursor|windsurf|Windsurf|antigravity|Antigravity|agy|zed|Zed) return 0 ;;
+  esac
+  case "${TERMINAL_EMULATOR:-}" in
+    *JetBrains*) return 0 ;;
+  esac
+  case "${ZDOTDIR:-}" in
+    *vscode*|*antigravity*|*cursor*|*windsurf*) return 0 ;;
+  esac
+  _FASTFETCH_SHOWN=1
+  fastfetch
+}

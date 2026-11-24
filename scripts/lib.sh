@@ -192,6 +192,7 @@ link_all() {
   link shell/bash/inputrc              .inputrc
   link config/ghostty/config           .config/ghostty/config
   link config/starship.toml            .config/starship.toml
+  link config/fastfetch/config.jsonc   .config/fastfetch/config.jsonc
   link config/nvim                     .config/nvim
   link config/tmux/tmux.conf           .tmux.conf
   link config/git/config               .config/git/config
@@ -300,6 +301,7 @@ run_doctor() {
     "shell/bash/inputrc:.inputrc"
     "config/ghostty/config:.config/ghostty/config"
     "config/starship.toml:.config/starship.toml"
+    "config/fastfetch/config.jsonc:.config/fastfetch/config.jsonc"
     "config/nvim:.config/nvim"
     "config/tmux/tmux.conf:.tmux.conf"
     "config/git/config:.config/git/config"
@@ -320,7 +322,7 @@ run_doctor() {
 
   # 2. Core CLI tools
   local cmd
-  for cmd in git zsh bash fzf rg eza zoxide starship nvim tmux jq bat delta yazi; do
+  for cmd in git zsh bash fzf rg eza zoxide starship fastfetch nvim tmux jq bat delta yazi; do
     if command -v "$cmd" >/dev/null 2>&1; then
       ok "tool: $cmd ($(command -v "$cmd"))"
     elif [ "$cmd" = "bat" ] && command -v batcat >/dev/null 2>&1; then

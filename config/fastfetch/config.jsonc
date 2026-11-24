@@ -1,0 +1,119 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "auto",
+    "padding": {
+      "top": 1,
+      "left": 1,
+      "right": 3
+    }
+  },
+  "display": {
+    "separator": " ❯ ",
+    "key": {
+      "width": 13
+    },
+    "color": {
+      "keys": "#7aa2f7",
+      "title": "#7aa2f7",
+      "output": "#c0caf5",
+      "separator": "#565f89"
+    },
+    "percent": {
+      "type": 1,
+      "color": {
+        "green": "#73daca",
+        "yellow": "#e0af68",
+        "red": "#f7768e"
+      }
+    }
+  },
+  "modules": [
+    {
+      "type": "title",
+      "color": {
+        "user": "#7aa2f7",
+        "at": "#565f89",
+        "host": "#bb9af7"
+      }
+    },
+    {
+      "type": "separator",
+      "string": "─"
+    },
+    {
+      "type": "os",
+      "key": "{icon} OS",
+      "keyColor": "#7aa2f7"
+    },
+    {
+      "type": "host",
+      "key": "󰌢 Host",
+      "keyColor": "#7aa2f7"
+    },
+    {
+      "type": "kernel",
+      "key": " Kernel",
+      "keyColor": "#7dcfff",
+      "format": "{sysname} {release}"
+    },
+    {
+      "type": "uptime",
+      "key": "󰅐 Uptime",
+      "keyColor": "#73daca"
+    },
+    {
+      "type": "shell",
+      "key": " Shell",
+      "keyColor": "#bb9af7"
+    },
+    {
+      "type": "terminal",
+      "key": " Terminal",
+      "keyColor": "#bb9af7"
+    },
+    {
+      "type": "cpu",
+      "key": "󰍛 CPU",
+      "keyColor": "#e0af68",
+      "showPeCoreCount": true
+    },
+    {
+      "type": "gpu",
+      "key": "󰢮 GPU",
+      "keyColor": "#ff9e64"
+    },
+    {
+      "type": "memory",
+      "key": " Memory",
+      "keyColor": "#73daca"
+    },
+    {
+      "type": "disk",
+      "key": "󰉉 Disk",
+      "keyColor": "#e0af68",
+      "folders": "/",
+      "format": "{size-used} / {size-total} ({size-percentage})"
+    },
+    {
+      "type": "battery",
+      "key": "󰁹 Battery",
+      "keyColor": "#73daca"
+    },
+    {
+      "type": "localip",
+      "key": "󰩟 Local IP",
+      "keyColor": "#7dcfff",
+      "showIpv4": true,
+      "showIpv6": false,
+      "defaultRouteOnly": true,
+      "format": "{ipv4} ({ifname})"
+    },
+    "break",
+    {
+      "type": "colors",
+      "symbol": "circle",
+      "paddingLeft": 0
+    }
+  ]
+}

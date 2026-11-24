@@ -1,6 +1,12 @@
-# Starship prompt configuration optimized for Ghostty (TokyoNight theme)
+# Starship prompt configuration optimized for Ghostty (TokyoNight theme, aligned with Fastfetch)
+
+add_newline = true
+palette = "tokyonight"
 
 format = """
+$os\
+$username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
@@ -16,55 +22,107 @@ $character"""
 
 command_timeout = 1000
 
+[palettes.tokyonight]
+blue = "#7aa2f7"
+purple = "#bb9af7"
+teal = "#73daca"
+cyan = "#7dcfff"
+yellow = "#e0af68"
+orange = "#ff9e64"
+red = "#f7768e"
+peach = "#f7c59f"
+muted = "#565f89"
+fg = "#c0caf5"
+
+[os]
+disabled = false
+style = "bold blue"
+format = "[$symbol]($style)"
+
+[os.symbols]
+Macos = " "
+Arch = " "
+Ubuntu = " "
+Debian = " "
+Fedora = " "
+Linux = " "
+Manjaro = " "
+NixOS = " "
+Alpine = " "
+Pop = " "
+Mint = "󰣭 "
+EndeavourOS = " "
+Kali = " "
+Gentoo = " "
+openSUSE = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+AlmaLinux = " "
+CentOS = " "
+FreeBSD = " "
+
+[username]
+show_always = false
+style_user = "bold blue"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = true
+ssh_symbol = ""
+style = "bold purple"
+format = "[@](muted)[$hostname]($style) "
+
 [directory]
-style = "bold #7aa2f7"
+style = "bold blue"
 truncation_length = 4
 truncation_symbol = "…/"
-read_only = " 🔒"
+read_only = " 󰌾"
+read_only_style = "red"
 
 [git_branch]
 symbol = "󰘬 "
-style = "bold #bb9af7"
-format = "on [$symbol$branch]($style) "
+style = "bold purple"
+format = "[on](muted) [$symbol$branch]($style) "
 
 [git_status]
-style = "bold #f7768e"
+style = "bold red"
 format = "([$all_status$ahead_behind]($style) )"
 
 [character]
-success_symbol = "[❯](bold #73daca)"
-error_symbol = "[❯](bold #f7768e)"
-vimcmd_symbol = "[❮](bold #e0af68)"
+success_symbol = "[❯](bold teal)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"
 
 [nodejs]
 symbol = " "
-style = "bold #73daca"
-format = "via [$symbol($version )]($style)"
+style = "bold teal"
+format = "[via](muted) [$symbol($version )]($style)"
 
 [bun]
 symbol = "🥟 "
-style = "bold #f7c59f"
-format = "via [$symbol($version )]($style)"
+style = "bold peach"
+format = "[via](muted) [$symbol($version )]($style)"
 
 [python]
 symbol = " "
-style = "bold #e0af68"
-format = "via [${symbol}${pyenv_prefix}(${version} )]($style)"
+style = "bold yellow"
+format = "[via](muted) [${symbol}${pyenv_prefix}(${version} )]($style)"
 
 [rust]
 symbol = " "
-style = "bold #ff9e64"
-format = "via [$symbol($version )]($style)"
+style = "bold orange"
+format = "[via](muted) [$symbol($version )]($style)"
 
 [golang]
 symbol = " "
-style = "bold #7dcfff"
-format = "via [$symbol($version )]($style)"
+style = "bold cyan"
+format = "[via](muted) [$symbol($version )]($style)"
 
 [cmd_duration]
 min_time = 2000
-style = "bold #e0af68"
-format = "took [$duration]($style) "
+style = "bold yellow"
+format = "[took](muted) [$duration]($style) "
 
 [package]
 disabled = true
